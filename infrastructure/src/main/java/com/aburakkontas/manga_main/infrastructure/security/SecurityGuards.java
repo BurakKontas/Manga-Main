@@ -2,7 +2,7 @@ package com.aburakkontas.manga_main.infrastructure.security;
 
 import com.aburakkontas.manga.common.auth.queries.ValidateTokenQuery;
 import com.aburakkontas.manga.common.auth.queries.results.ValidateTokenQueryResult;
-import com.aburakkontas.manga_payment.domain.exceptions.ExceptionWithErrorCode;
+import com.aburakkontas.manga_main.domain.ExceptionWithErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.axonframework.queryhandling.QueryGateway;

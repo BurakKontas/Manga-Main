@@ -1,12 +1,16 @@
 plugins {
     id 'java'
+    id 'org.springframework.boot' version '3.2.5'
+    id 'io.spring.dependency-management' version '1.1.4'
 }
+
 
 group = 'com.aburakkontas.manga_main'
 version = '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
+    mavenLocal()
 }
 
 dependencies {
@@ -18,7 +22,8 @@ dependencies {
     implementation 'org.hibernate.orm:hibernate-proxool:6.5.1.Final'
     implementation 'org.hibernate.orm:hibernate-jcache:6.5.1.Final'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa:3.2.5'
-    implementation "com.iyzipay:iyzipay-java:2.0.124"
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'com.google.code.gson:gson:2.8.5'
     compileOnly 'org.projectlombok:lombok:1.18.32'
     annotationProcessor 'org.projectlombok:lombok:1.18.32'
 

@@ -1,7 +1,7 @@
 package com.aburakkontas.manga_main.infrastructure.security;
 
-import com.aburakkontas.manga_payment.domain.exceptions.ExceptionWithErrorCode;
-import com.aburakkontas.manga_payment.domain.primitives.Result;
+import com.aburakkontas.manga_main.domain.ExceptionWithErrorCode;
+import com.aburakkontas.manga_main.domain.primitives.Result;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

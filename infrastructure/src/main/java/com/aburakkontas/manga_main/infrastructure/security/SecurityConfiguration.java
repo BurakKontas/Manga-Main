@@ -18,15 +18,12 @@ public class SecurityConfiguration extends WebSecurityConfiguration {
 
     private final JwtAuthEntryPoint authEntryPoint;
     private final JWTAuthenticationFilter jwtAuthenticationFilter;
-    private final CacheBodyHttpServletFilter cacheBodyHttpServletFilter;
 
     @Autowired
     public SecurityConfiguration(JwtAuthEntryPoint authEntryPoint,
-                                 JWTAuthenticationFilter jwtAuthenticationFilter,
-                                 CacheBodyHttpServletFilter cacheBodyHttpServletFilter) {
+                                 JWTAuthenticationFilter jwtAuthenticationFilter) {
         this.authEntryPoint = authEntryPoint;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
-        this.cacheBodyHttpServletFilter = cacheBodyHttpServletFilter;
     }
 
     @Bean
@@ -35,6 +32,7 @@ public class SecurityConfiguration extends WebSecurityConfiguration {
                 .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(req -> req
+                        .requestMatchers("/error").permitAll()
                         .requestMatchers(
                                 "/v2/api-docs",
                                 "/v3/api-docs",
@@ -48,7 +46,8 @@ public class SecurityConfiguration extends WebSecurityConfiguration {
                                 "/swagger-ui.html",
                                 "/docs"
                         ).permitAll()
-                        .anyRequest().authenticated()
+//                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(e -> e.authenticationEntryPoint(authEntryPoint));
