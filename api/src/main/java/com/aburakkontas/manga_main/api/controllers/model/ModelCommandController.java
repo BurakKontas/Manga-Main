@@ -1,7 +1,8 @@
 package com.aburakkontas.manga_main.api.controllers.model;
 
+import com.aburakkontas.manga_main.domain.bodies.*;
 import com.aburakkontas.manga_main.domain.repositories.ModelRepository;
-import com.aburakkontas.manga_main.domain.responses.DetectronResponse;
+import com.aburakkontas.manga_main.domain.responses.*;
 import com.google.common.net.MediaType;
 import lombok.SneakyThrows;
 import okhttp3.MultipartBody;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 @RestController
 @RequestMapping(path = "/api/v1/model")
@@ -34,6 +36,41 @@ public class ModelCommandController {
     @PostMapping("/detectron")
     public DetectronResponse detectron(@RequestParam("file") MultipartFile file) throws IOException {
         return modelRepository.detectron(file.getBytes());
+    }
+
+    @PostMapping("/generate_mask")
+    public GenerateMaskResponse generateMask(@RequestBody GenerateMaskBody request) {
+        return modelRepository.generateMask(request);
+    }
+
+    @PostMapping("/madf")
+    public MADFResponse madf(@RequestBody MADFBody request) {
+        return modelRepository.madf(request);
+    }
+
+    @PostMapping("/meta_craft")
+    public ArrayList<MetaResponse> metaCraft(@RequestBody MetaBody request) {
+        return modelRepository.metaCraft(request);
+    }
+
+    @PostMapping("/crop_image")
+    public ArrayList<CropImageResponse> cropImage(@RequestBody CropImageBody request) {
+        return modelRepository.cropImage(request);
+    }
+
+    @PostMapping("/ocr")
+    public ArrayList<OCRResponse> ocr(@RequestBody ArrayList<OCRBody> request) {
+        return modelRepository.ocr(request);
+    }
+
+    @PostMapping("/translate")
+    public TranslateResponse translate(@RequestBody TranslateBody request) {
+        return modelRepository.translate(request);
+    }
+
+    @PostMapping("/write")
+    public WriteResponse write(@RequestBody WriteBody request) {
+        return modelRepository.write(request);
     }
     
 }

@@ -4,6 +4,7 @@ import com.aburakkontas.manga_main.domain.bodies.*;
 import com.aburakkontas.manga_main.domain.responses.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public interface ModelRepository {
     DetectronResponse detectron(byte[] file);
@@ -12,11 +13,11 @@ public interface ModelRepository {
 
     MADFResponse madf(MADFBody request);
 
-    MetaResponse metaCraft(MetaBody request);
+    ArrayList<MetaResponse> metaCraft(MetaBody request);
 
-    CropImageResponse cropImage(CropImageBody request);
+    ArrayList<CropImageResponse> cropImage(CropImageBody request);
 
-    OCRResponse ocr(OCRBody request);
+    ArrayList<OCRResponse> ocr(ArrayList<OCRBody> request);
 
     TranslateResponse translate(TranslateBody request);
 

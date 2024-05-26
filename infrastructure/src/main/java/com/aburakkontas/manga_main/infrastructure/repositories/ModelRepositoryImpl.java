@@ -13,6 +13,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.util.LinkedMultiValueMap;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 @Service
@@ -59,18 +61,18 @@ public class ModelRepositoryImpl implements ModelRepository {
     }
 
     @Override
-    public MetaResponse metaCraft(MetaBody request) {
-        return execute("/meta_craft", request, MetaResponse.class);
+    public ArrayList<MetaResponse> metaCraft(MetaBody request) {
+        return execute("/meta_craft", request, ArrayList.class);
     }
 
     @Override
-    public CropImageResponse cropImage(CropImageBody request) {
-        return execute("/crop_image", request, CropImageResponse.class);
+    public ArrayList<CropImageResponse> cropImage(CropImageBody request) {
+        return execute("/crop_image", request, ArrayList.class);
     }
 
     @Override
-    public OCRResponse ocr(OCRBody request) {
-        return execute("/ocr", request, OCRResponse.class);
+    public ArrayList<OCRResponse> ocr(ArrayList<OCRBody> request) {
+        return execute("/ocr", request, ArrayList.class);
     }
 
     @Override

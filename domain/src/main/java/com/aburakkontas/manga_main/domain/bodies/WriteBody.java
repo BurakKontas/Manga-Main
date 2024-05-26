@@ -10,6 +10,7 @@ public class WriteBody {
     private ArrayList<WriteData> data;
     private String image;
 
+    @Data
     public static class WriteData {
         private ArrayList<Double> bbox;
         private String text;

@@ -6,11 +6,6 @@ import java.util.ArrayList;
 
 @Data
 public class CropImageResponse {
-    private ArrayList<CropData> crops;
-
-    @Data
-    public static class CropData {
-        private ArrayList<Double> bbox;
-        private String image;
-    }
+    private ArrayList<Double> bbox;
+    private String image;
 }
