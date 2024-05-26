@@ -2,7 +2,7 @@ package com.aburakkontas.manga_main.infrastructure.security;
 
 import com.aburakkontas.manga.common.auth.queries.ValidateTokenQuery;
 import com.aburakkontas.manga.common.auth.queries.results.ValidateTokenQueryResult;
-import com.aburakkontas.manga_main.domain.ExceptionWithErrorCode;
+import com.aburakkontas.manga_main.domain.exceptions.ExceptionWithErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.axonframework.queryhandling.QueryGateway;
@@ -38,7 +38,7 @@ public class SecurityGuards {
 
         if(result.isValid()) return true;
 
-        var exception = new ExceptionWithErrorCode("Unauthorized", HttpServletResponse.SC_UNAUTHORIZED);
+        var exception = new ExceptionWithErrorCode("You are unauthorized to go further. Please log in with your supposedly admin account. Nobody believes you have admin account until you have proven it.", HttpServletResponse.SC_UNAUTHORIZED);
         authEntryPoint.commence(request, response, exception);
         return false;
     }

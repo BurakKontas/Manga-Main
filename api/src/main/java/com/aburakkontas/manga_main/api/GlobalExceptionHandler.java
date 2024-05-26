@@ -1,6 +1,6 @@
 package com.aburakkontas.manga_main.api;
 
-import com.aburakkontas.manga_main.domain.ExceptionWithErrorCode;
+import com.aburakkontas.manga_main.domain.exceptions.ExceptionWithErrorCode;
 import com.aburakkontas.manga_main.domain.primitives.Result;
 import org.axonframework.queryhandling.QueryExecutionException;
 import org.springframework.http.HttpStatus;

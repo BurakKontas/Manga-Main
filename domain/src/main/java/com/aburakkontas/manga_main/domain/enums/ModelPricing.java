@@ -11,7 +11,8 @@ public enum ModelPricing {
     CROP_IMAGE(0.25),
     OCR(7.5),
     TRANSLATE(1.0),
-    WRITE(3.5);
+    WRITE(3.0),
+    ALL(20.0);
 
 
     private final Double price;

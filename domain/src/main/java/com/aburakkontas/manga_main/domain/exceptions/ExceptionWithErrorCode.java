@@ -1,4 +1,4 @@
-package com.aburakkontas.manga_main.domain;
+package com.aburakkontas.manga_main.domain.exceptions;
 
 import lombok.Getter;
 

@@ -85,5 +85,19 @@ public class ModelCommandController {
     public WriteResponse write(@RequestBody WriteBody request) {
         return modelRepository.write(request);
     }
+
+    @Operation(
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "File to be processed",
+                    content = @Content(
+                            mediaType = "multipart/form-data",
+                            schema = @Schema(type = "string", format = "binary")
+                    )
+            )
+    )
+    @PostMapping("/all")
+    public WriteResponse all(@RequestParam("file") MultipartFile file) {
+        return null;
+    }
     
 }
