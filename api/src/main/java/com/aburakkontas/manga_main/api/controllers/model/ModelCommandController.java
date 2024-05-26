@@ -3,9 +3,8 @@ package com.aburakkontas.manga_main.api.controllers.model;
 import com.aburakkontas.manga_main.domain.bodies.*;
 import com.aburakkontas.manga_main.domain.repositories.ModelRepository;
 import com.aburakkontas.manga_main.domain.responses.*;
-import com.google.common.net.MediaType;
-import lombok.SneakyThrows;
-import okhttp3.MultipartBody;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -33,8 +35,19 @@ public class ModelCommandController {
         this.modelRepository = modelRepository;
     }
 
+    @Operation(
+        requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                description = "File to be processed",
+                content = @Content(
+                        mediaType = "multipart/form-data",
+                        schema = @Schema(type = "string", format = "binary")
+                )
+        )
+    )
     @PostMapping("/detectron")
-    public DetectronResponse detectron(@RequestParam("file") MultipartFile file) throws IOException {
+    public DetectronResponse detectron(
+            @RequestParam("file") MultipartFile file
+    ) throws IOException {
         return modelRepository.detectron(file.getBytes());
     }
 
