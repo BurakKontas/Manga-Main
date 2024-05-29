@@ -2,17 +2,15 @@ package com.aburakkontas.manga_main.domain.enums;
 
 import lombok.Getter;
 
+import java.util.Arrays;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 @Getter
 public enum ModelPricing {
-    DETECTRON(1.5),
-    GENERATE_MASK(0.25),
-    MADF(5.0),
-    META(1.5),
-    CROP_IMAGE(0.25),
-    OCR(7.5),
-    TRANSLATE(1.0),
-    WRITE(3.0),
-    ALL(20.0);
+    CLEAN(5.0),
+    OCR(3.0),
+    WRITE(2.0);
 
 
     private final Double price;

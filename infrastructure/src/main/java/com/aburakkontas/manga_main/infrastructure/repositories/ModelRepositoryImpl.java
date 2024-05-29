@@ -1,6 +1,7 @@
 package com.aburakkontas.manga_main.infrastructure.repositories;
 
 import com.aburakkontas.manga_main.domain.bodies.*;
+import com.aburakkontas.manga_main.domain.enums.ModelPricing;
 import com.aburakkontas.manga_main.domain.responses.*;
 import com.aburakkontas.manga_main.domain.repositories.ModelRepository;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,6 +15,9 @@ import org.springframework.http.MediaType;
 import org.springframework.util.LinkedMultiValueMap;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class ModelRepositoryImpl implements ModelRepository {
@@ -25,6 +29,12 @@ public class ModelRepositoryImpl implements ModelRepository {
 
     public ModelRepositoryImpl(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
+    }
+
+    @Override
+    public Map<String, Double> getModelPrices() {
+        return Arrays.stream(ModelPricing.values())
+                .collect(Collectors.toMap(Enum::name, ModelPricing::getPrice));
     }
 
     @Override

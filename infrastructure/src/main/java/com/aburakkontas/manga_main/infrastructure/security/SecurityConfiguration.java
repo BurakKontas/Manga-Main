@@ -46,7 +46,8 @@ public class SecurityConfiguration extends WebSecurityConfiguration {
                                 "/swagger-ui.html",
                                 "/docs"
                         ).permitAll()
-                        .anyRequest().authenticated()
+//                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(e -> e.authenticationEntryPoint(authEntryPoint));

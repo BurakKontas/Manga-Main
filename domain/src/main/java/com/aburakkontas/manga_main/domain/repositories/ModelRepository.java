@@ -5,8 +5,12 @@ import com.aburakkontas.manga_main.domain.responses.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Map;
 
 public interface ModelRepository {
+
+    Map<String, Double> getModelPrices();
+
     DetectronResponse detectron(byte[] file);
 
     GenerateMaskResponse generateMask(GenerateMaskBody request);
