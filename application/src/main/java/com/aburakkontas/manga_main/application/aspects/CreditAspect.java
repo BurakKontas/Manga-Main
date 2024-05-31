@@ -24,6 +24,7 @@ public class CreditAspect {
 
     private final CommandGateway commandGateway;
     private final QueryGateway queryGateway;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     public CreditAspect(CommandGateway commandGateway, QueryGateway queryGateway) {
         this.commandGateway = commandGateway;
@@ -35,59 +36,59 @@ public class CreditAspect {
         if (joinPoint.getSignature().getName().equals("getModelPricing")) {
             return joinPoint.proceed();
         }
+
         Object[] args = joinPoint.getArgs();
-        UUID userId = getUserIdFromArgs(args);
-        ModelPricing price = getModelPricingFromMethod(joinPoint.getSignature().getName());
+        UUID userId = extractUserId(args);
+        ModelPricing price = getModelPricing(joinPoint.getSignature().getName());
 
-        if (userId != null && price != null) {
-            try {
-                hasCreditGuard(userId, price);
-                deductCredit(userId, price);
-                return joinPoint.proceed();
-            } catch (Exception e) {
-                refundCredit(userId, price);
-                throw e;
-            }
-        } else {
-            throw new ExceptionWithErrorCode("UserId or price not found", 400);
+        verifyAndProcessCredits(userId, price);
+        return joinPoint.proceed();
+    }
+
+    private UUID extractUserId(Object[] args) {
+        var map = objectMapper.convertValue(args[0], Map.class);
+        return map.containsKey("userId") ? UUID.fromString((String) map.get("userId")) : null;
+    }
+
+    private ModelPricing getModelPricing(String methodName) {
+        Map<String, ModelPricing> pricingMap = Map.of(
+                "cleanImage", ModelPricing.CLEAN,
+                "ocr", ModelPricing.OCR,
+                "translate", ModelPricing.TRANSLATE,
+                "write", ModelPricing.WRITE
+        );
+        return pricingMap.getOrDefault(methodName, null);
+    }
+
+    private void verifyAndProcessCredits(UUID userId, ModelPricing price) throws ExceptionWithErrorCode {
+        if (userId == null || price == null) {
+            throw new ExceptionWithErrorCode("UserId or price not found", HttpServletResponse.SC_BAD_REQUEST);
+        }
+
+        checkCredit(userId, price);
+        try {
+            deductCredit(userId, price);
+        } catch (Exception e) {
+            refundCredit(userId, price);
+            throw e;
         }
     }
 
-    private UUID getUserIdFromArgs(Object[] args) {
-        var arg = args[0];
-        var mapper = new ObjectMapper();
-        var map = mapper.convertValue(arg, Map.class);
-        if (map.containsKey("userId")) {
-            return UUID.fromString((String) map.get("userId"));
-        }
-        return null;
-    }
-
-    private ModelPricing getModelPricingFromMethod(String methodName) {
-        return switch (methodName) {
-            case "cleanImage" -> ModelPricing.CLEAN;
-            case "ocr" -> ModelPricing.OCR;
-            case "translate" -> ModelPricing.TRANSLATE;
-            case "write" -> ModelPricing.WRITE;
-            default -> throw new IllegalArgumentException("Method not found");
-        };
-    }
-
-    private void hasCreditGuard(UUID userId, ModelPricing price) {
-        var query = new HasCreditQuery(userId, price.getPrice());
-        var result = queryGateway.query(query, HasCreditQueryResult.class).join();
-        if(!result.isHasCredit()) {
+    private void checkCredit(UUID userId, ModelPricing price) {
+        HasCreditQuery query = new HasCreditQuery(userId, price.getPrice());
+        HasCreditQueryResult result = queryGateway.query(query, HasCreditQueryResult.class).join();
+        if (!result.isHasCredit()) {
             throw new ExceptionWithErrorCode("Not enough credit", HttpServletResponse.SC_PAYMENT_REQUIRED);
         }
     }
 
     private void deductCredit(UUID userId, ModelPricing price) {
-        var command = new DeductCreditCommand(userId, price.getPrice());
+        DeductCreditCommand command = new DeductCreditCommand(userId, price.getPrice());
         commandGateway.sendAndWait(command);
     }
 
     private void refundCredit(UUID userId, ModelPricing price) {
-        var command = new RefundCreditCommand(userId, price.getPrice());
+        RefundCreditCommand command = new RefundCreditCommand(userId, price.getPrice());
         commandGateway.sendAndWait(command);
     }
 }
