@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 public enum ModelPricing {
     CLEAN(5.0),
     OCR(3.0),
+    TRANSLATE(1.0),
     WRITE(2.0);
 
 

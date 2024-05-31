@@ -4,6 +4,12 @@ import com.aburakkontas.manga_main.domain.bodies.*;
 import com.aburakkontas.manga_main.domain.enums.ModelPricing;
 import com.aburakkontas.manga_main.domain.responses.*;
 import com.aburakkontas.manga_main.domain.repositories.ModelRepository;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
@@ -16,6 +22,7 @@ import org.springframework.util.LinkedMultiValueMap;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -68,19 +75,35 @@ public class ModelRepositoryImpl implements ModelRepository {
         return execute("/madf", request, MADFResponse.class);
     }
 
+    @SneakyThrows
     @Override
     public ArrayList<MetaResponse> metaCraft(MetaBody request) {
-        return execute("/meta_craft", request, ArrayList.class);
+        ArrayList<LinkedHashMap<?, ?>> data = execute("/meta_craft", request, ArrayList.class);
+        return data.stream().map(map -> mapToResponse(map, MetaResponse.class)).collect(Collectors.toCollection(ArrayList::new));
     }
 
+    @SneakyThrows
     @Override
     public ArrayList<CropImageResponse> cropImage(CropImageBody request) {
-        return execute("/crop_image", request, ArrayList.class);
+        ArrayList<LinkedHashMap<?, ?>> data = execute("/crop_image", request, ArrayList.class);
+        return data.stream().map(map -> mapToResponse(map, CropImageResponse.class)).collect(Collectors.toCollection(ArrayList::new));
     }
 
+    @SneakyThrows
     @Override
     public ArrayList<OCRResponse> ocr(ArrayList<OCRBody> request) {
-        return execute("/ocr", request, ArrayList.class);
+        ArrayList<ArrayList<LinkedHashMap<?, ?>>> data = execute("/ocr", request, ArrayList.class);
+        ObjectMapper mapper = new ObjectMapper();
+        var typeReference = new TypeReference<ArrayList<OCRResponse.OCRData>>() {};
+        ArrayList<OCRResponse> ocrResponses = new ArrayList<>();
+        for (ArrayList<LinkedHashMap<?, ?>> map : data) {
+            String jsonData = mapper.writeValueAsString(map);
+            ArrayList<OCRResponse.OCRData> ocrData = mapper.readValue(jsonData, typeReference);
+            OCRResponse ocrResponse = new OCRResponse();
+            ocrResponse.setOcrData(ocrData);
+            ocrResponses.add(ocrResponse);
+        }
+        return ocrResponses;
     }
 
     @Override
@@ -95,5 +118,12 @@ public class ModelRepositoryImpl implements ModelRepository {
 
     public <T> T execute(String url, Object body, Class<T> responseType) {
         return restTemplate.postForObject(baseUrl + url, body, responseType);
+    }
+
+    @SneakyThrows
+    private static <T> T mapToResponse(LinkedHashMap<?, ?> map, Class<T> responseType) {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.readValue(mapper.writeValueAsString(map), responseType);
+
     }
 }

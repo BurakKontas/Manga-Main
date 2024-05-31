@@ -9,10 +9,11 @@ import java.util.ArrayList;
 @Data
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class OCRResponse {
-    private ArrayList<ArrayList<OCRData>> ocrData;
+    private ArrayList<OCRData> ocrData;
 
     @Data
     public static class OCRData {
+        private ArrayList<ArrayList<Integer>> bbox;
         private String text;
         private String image;
         private Double confidence;

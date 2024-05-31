@@ -1,4 +1,4 @@
-package com.aburakkontas.manga_main.domain.bodies;
+package com.aburakkontas.manga_main.contracts.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -6,10 +6,8 @@ import lombok.Data;
 import java.util.ArrayList;
 
 @Data
-public class WriteBody {
-    private Boolean debug;
+public class WriteRequest {
     private ArrayList<WriteData> data;
-    private String image;
 
     @Data
     @AllArgsConstructor

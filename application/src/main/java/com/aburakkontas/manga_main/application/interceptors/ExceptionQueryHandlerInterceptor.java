@@ -17,7 +17,7 @@ public class ExceptionQueryHandlerInterceptor implements MessageHandlerIntercept
         } catch (ExceptionWithErrorCode e) {
             throw new QueryExecutionException(e.getMessage(), e, e.getCode());
         } catch (Exception e) {
-            throw new QueryExecutionException(e.getCause().getMessage(), e.getCause(), e);
+            throw e;
         }
     }
 }

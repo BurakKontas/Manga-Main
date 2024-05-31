@@ -17,9 +17,9 @@ public interface ModelRepository {
 
     MADFResponse madf(MADFBody request);
 
-    ArrayList<MetaResponse> metaCraft(MetaBody request);
-
     ArrayList<CropImageResponse> cropImage(CropImageBody request);
+
+    ArrayList<MetaResponse> metaCraft(MetaBody request);
 
     ArrayList<OCRResponse> ocr(ArrayList<OCRBody> request);
 
