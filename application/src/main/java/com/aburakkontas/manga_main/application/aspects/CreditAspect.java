@@ -2,13 +2,17 @@ package com.aburakkontas.manga_main.application.aspects;
 
 import com.aburakkontas.manga.common.payment.commands.DeductCreditCommand;
 import com.aburakkontas.manga.common.payment.commands.RefundCreditCommand;
+import com.aburakkontas.manga.common.payment.queries.HasCreditQuery;
+import com.aburakkontas.manga.common.payment.queries.results.HasCreditQueryResult;
 import com.aburakkontas.manga_main.domain.enums.ModelPricing;
 import com.aburakkontas.manga_main.domain.exceptions.ExceptionWithErrorCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletResponse;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.axonframework.commandhandling.gateway.CommandGateway;
+import org.axonframework.queryhandling.QueryGateway;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -19,9 +23,11 @@ import java.util.UUID;
 public class CreditAspect {
 
     private final CommandGateway commandGateway;
+    private final QueryGateway queryGateway;
 
-    public CreditAspect(CommandGateway commandGateway) {
+    public CreditAspect(CommandGateway commandGateway, QueryGateway queryGateway) {
         this.commandGateway = commandGateway;
+        this.queryGateway = queryGateway;
     }
 
     @Around("execution(public * com.aburakkontas.manga_main.application.handlers.ModelQueryHandlers.*(..))")
@@ -35,6 +41,7 @@ public class CreditAspect {
 
         if (userId != null && price != null) {
             try {
+                hasCreditGuard(userId, price);
                 deductCredit(userId, price);
                 return joinPoint.proceed();
             } catch (Exception e) {
@@ -64,6 +71,14 @@ public class CreditAspect {
             case "write" -> ModelPricing.WRITE;
             default -> throw new IllegalArgumentException("Method not found");
         };
+    }
+
+    private void hasCreditGuard(UUID userId, ModelPricing price) {
+        var query = new HasCreditQuery(userId, price.getPrice());
+        var result = queryGateway.query(query, HasCreditQueryResult.class).join();
+        if(!result.isHasCredit()) {
+            throw new ExceptionWithErrorCode("Not enough credit", HttpServletResponse.SC_PAYMENT_REQUIRED);
+        }
     }
 
     private void deductCredit(UUID userId, ModelPricing price) {
